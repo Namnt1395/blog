@@ -1,0 +1,24 @@
+/**
+Side bar
+ */
+.user-panel {
+    border-bottom: 1px solid #4f5962;
+}
+
+.sidebar p {
+    color: black;
+}
+
+/**
+End Side bar
+ */
+
+/**
+ Css main-header
+ */
+.navbar-white {
+    background-color: #f4f6f9!important;
+}
+/**
+ End Css main-header
+ */

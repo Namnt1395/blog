@@ -21,9 +21,9 @@ use App\Http\Controllers\HomeController;
 
 //Route::get('/' , [HomeController::class,'index']);
 
-Route::group([],function(){
-    Route::get('/' , [HomeController::class,'index']);
-    Route::get('/ad-tag' , [HomeController::class,'index']);
-    //các route khác
-});
+
+Route::get('/', [HomeController::class, 'index']);
+Route::get('/category', [HomeController::class, 'index']);
+//các route khác
+
 

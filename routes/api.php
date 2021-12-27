@@ -18,7 +18,7 @@ Route::get('version', function () {
     return response()->json(['version' => config('app.version')]);
 });
 
-//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//Route::middleware('auth:api')->get('/user', function (Requests $request) {
 //    Log::debug('User:' . serialize($request->user()));
 //    return $request->user();
 //});
@@ -26,11 +26,11 @@ Route::get('version', function () {
 Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
 
     Route::get('tag/list', 'TagController@list');
+    Route::get('category/list', 'CategoryController@list');
+    Route::put('category/{category}', 'CategoryController@updateData');
 
-    Route::apiResources([
-        'user' => 'UserController',
-        'product' => 'ProductController',
-        'category' => 'CategoryController',
-        'tag' => 'TagController',
-    ]);
+//    Route::apiResources([
+//        'category' => 'CategoryController',
+//    ]);
+
 });

@@ -27,10 +27,9 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
 
     Route::get('tag/list', 'TagController@list');
     Route::get('category/list', 'CategoryController@list');
-    Route::put('category/{category}', 'CategoryController@updateData');
 
-//    Route::apiResources([
-//        'category' => 'CategoryController',
-//    ]);
+    Route::apiResources([
+        'category' => 'CategoryController',
+    ]);
 
 });

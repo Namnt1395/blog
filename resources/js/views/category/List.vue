@@ -8,7 +8,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="btn-group">
-                                    <router-link :to="{ name: 'categorynew' }" tag="button" class="btn btn-sm btn-primary heading-btn"><span>New</span></router-link>
+                                    <router-link :to="{ name: 'category.create' }" tag="button" class="btn btn-sm btn-primary heading-btn"><span>New</span></router-link>
                                     <a class="btn btn-sm btn-primary heading-btn disabled" href="/campaigns/new"><span>Edit</span></a>
                                 </div>
                             </div><!-- /.card-header -->
@@ -16,6 +16,7 @@
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                     <tr>
+                                        <th><input type="checkbox" @click="selectAll()" v-model="allSelected"></th>
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Description</th>
@@ -24,6 +25,7 @@
                                     </thead>
                                     <tbody>
                                     <tr v-for="cat in listCategory">
+                                        <td><input type="checkbox"></td>
                                         <td>{{ cat.id }}</td>
                                         <td>{{ cat.title }}</td>
                                         <td>{{ cat.description }}</td>
@@ -107,6 +109,9 @@ export default {
                 title: '',
                 description: ''
             }),
+            selected: [],
+            allSelected: false,
+            cateIds: [],
             listCategory: {},
             rows: 0,
             perPage: 5,
@@ -123,7 +128,7 @@ export default {
     methods: {
         loadListCategory(page = 1) {
             console.log(page)
-            axios.get('api/category/list?page=' + page).then(({data}) => (this.listCategory = data.data, this.rows = data.count))
+            axios.get('/api/category/list?page=' + page).then(({data}) => (this.listCategory = data.data, this.rows = data.count))
         },
         editCategory(category) {
             this.editMode = true;
@@ -132,7 +137,7 @@ export default {
             this.form.fill(category)
         },
         updateCategory() {
-            this.form.put('api/category/' + this.form.id)
+            this.form.put('/api/category/' + this.form.id)
                 .then( data => {
                     if (data.success) {
                         this.$emit('completed');
@@ -145,7 +150,10 @@ export default {
                 }).catch(error => {
 
             });
-        }
+        },
+        selectAll: function() {
+
+        },
     },
     watch: {
         currentPage: {
@@ -158,10 +166,10 @@ export default {
 </script>
 
 <style scoped>
-    .position-left {
-        margin-right: 7px;
-    }
-    .heading-btn{
-        margin-right: 4px;
-    }
+.position-left {
+    margin-right: 7px;
+}
+.heading-btn{
+    margin-right: 4px;
+}
 </style>

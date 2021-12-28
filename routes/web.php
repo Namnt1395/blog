@@ -23,7 +23,10 @@ use App\Http\Controllers\HomeController;
 
 
 Route::get('/', [HomeController::class, 'index']);
+//Route::get('/category/create', [HomeController::class, 'index']);
+Route::any('/category/{any?}', [HomeController::class, 'index'])->where(['any' => '.*']);
 Route::get('/category', [HomeController::class, 'index']);
+//Route::any('/category/{any}', [HomeController::class, 'index'])->where(['any' => '.*']);
 //các route khác
 
 

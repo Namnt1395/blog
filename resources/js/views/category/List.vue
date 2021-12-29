@@ -169,12 +169,18 @@ export default {
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Send request to server
+                    this.form.delete('api/category/'+id).then(()=>{
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        )
+                        // Fire.$emit('AfterCreate');
+                        this.loadListCategory(this.currentPage);
+                    }).catch((data)=> {
+                        Swal.fire("Failed!", data.message, "warning");
+                    });
 
-                    Swal.fire(
-                        'Deleted!',
-                        'Your file has been deleted.',
-                        'success'
-                    )
                 }
             })
         },
@@ -220,7 +226,6 @@ export default {
             } else {
                 this.isCheckAll = false;
             }
-            console.log("length...", this.checkedCateIds)
         },
     },
     watch: {

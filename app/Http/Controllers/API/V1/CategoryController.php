@@ -32,7 +32,7 @@ class CategoryController extends BaseController
             ->where('status', '=', 1)
             ->count();
 
-        return $this->sendResponse($categories, $countCategory,"Category list");
+        return $this->sendResponse($categories, $countCategory, "Category list");
     }
 
     public function store(Request $request)
@@ -67,4 +67,10 @@ class CategoryController extends BaseController
         }
     }
 
+    public function destroy($id)
+    {
+        $category = Category::query()->findOrFail($id);
+        $category->delete();
+        return response()->json(['success' => true, 'message' => 'Project created successfully !', 'response' => '']);
+    }
 }

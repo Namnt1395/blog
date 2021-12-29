@@ -156,7 +156,7 @@ export default {
             $('#addNew').modal('show');
             this.form.fill(category)
         },
-        deleteCategory() {
+        deleteCategory(id) {
             Swal.fire({
                 title: 'Bạn có thực sự muốn xóa?',
                 text: "Dữ liệu sẽ không thể khôi phục lại",
@@ -170,13 +170,17 @@ export default {
                 if (result.isConfirmed) {
                     // Send request to server
                     this.form.delete('api/category/'+id).then(()=>{
-                        Swal.fire(
-                            'Deleted!',
-                            'Your file has been deleted.',
-                            'success'
+                        Swal.fire({
+                            heightAuto: false,
+                            width: 300,
+                            icon: 'success',
+                            title: 'Deleted',
+                            showConfirmButton: false,
+                            timer: 1000
+                            }
                         )
+                        this.$emit('completed');
                         // Fire.$emit('AfterCreate');
-                        this.loadListCategory(this.currentPage);
                     }).catch((data)=> {
                         Swal.fire("Failed!", data.message, "warning");
                     });
@@ -196,7 +200,7 @@ export default {
                             icon: 'success',
                             title: 'Update success',
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 1000
                         })
 
                     }

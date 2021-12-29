@@ -8,7 +8,9 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="btn-group">
-                                    <router-link :to="{ name: 'category.create' }" tag="button" class="btn btn-sm btn-primary heading-btn"><span>New</span></router-link>
+                                    <router-link :to="{ name: 'category.create' }" tag="button"
+                                                 class="btn btn-sm btn-primary heading-btn"><span>New</span>
+                                    </router-link>
                                     <a class="btn btn-sm btn-primary heading-btn disabled" href="/campaigns/new"><span>Edit</span></a>
                                 </div>
                             </div><!-- /.card-header -->
@@ -16,27 +18,33 @@
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                     <tr>
-                                        <th><input type="checkbox" @click="selectAll()" v-model="allSelected"></th>
+                                        <th><input type='checkbox' @click='checkAll()' v-model='isCheckAll'></th>
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Description</th>
-                                        <th>Action</th>
+                                        <!--                                        <th>Action</th>-->
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr v-for="cat in listCategory">
-                                        <td><input type="checkbox"></td>
+                                    <tr v-for="cat in listCategory" @mouseover="mouseOver(cat.id)"
+                                        @mouseleave="mouseLeave()">
+                                        <td><input type="checkbox" v-bind:value="cat.id" v-model="checkedCateIds"
+                                                   v-on:change="selectCheckboxId()"></td>
                                         <td>{{ cat.id }}</td>
-                                        <td>{{ cat.title }}</td>
-                                        <td>{{ cat.description }}</td>
                                         <td>
-                                            <a href="#" @click="editCategory(cat)">
-                                                <i class="fa fa-edit blue"></i>
-                                            </a>
-                                            <a href="#" @click="" class="purple">
-                                                <i class="fa fa-trash red"></i>
-                                            </a>
+                                            <div class="detail-name position-relative">
+                                                <div class="name"> {{ cat.title }}</div>
+                                                <ul class="position-absolute right-0 top-1"
+                                                    v-show="buttonIndex === cat.id">
+                                                    <li><a href="#" @click="editCategory(cat)"> <i
+                                                        class="fa fa-edit blue"></i></a></li>
+                                                    <li><a href="#" @click="deleteCategory(cat.id)"> <i
+                                                        class="fa fa-trash red"></i></a></li>
+                                                </ul>
+                                            </div>
+
                                         </td>
+                                        <td>{{ cat.description }}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -51,14 +59,15 @@
                                     next-text="Next"
                                     last-text="Last"></b-pagination>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
+                        <!-- /.card-body -->
                     </div>
-                    <!-- /.col -->
+                    <!-- /.card -->
                 </div>
-                <!-- /.row -->
+                <!-- /.col -->
             </div>
+            <!-- /.row -->
+
             <!-- /.container-fluid -->
 
             <!-- Modal -->
@@ -100,10 +109,18 @@
 </template>
 
 <script>
+import Pagination from 'laravel-vue-pagination'
+
+
 export default {
+
     data() {
         return {
             editMode: false,
+            checkedCateIds: [],
+            isCheckAll: false,
+            active: false,
+            buttonIndex: false,
             form: new Form({
                 id: '',
                 title: '',
@@ -117,6 +134,9 @@ export default {
             perPage: 5,
             currentPage: 1,
         }
+    },
+    components: {
+        Pagination
     },
     created() {
         this.loadListCategory()
@@ -136,23 +156,71 @@ export default {
             $('#addNew').modal('show');
             this.form.fill(category)
         },
+        deleteCategory() {
+            Swal.fire({
+                title: 'Bạn có thực sự muốn xóa?',
+                text: "Dữ liệu sẽ không thể khôi phục lại",
+                icon: 'warning',
+                width: 420,
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Send request to server
+
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    )
+                }
+            })
+        },
         updateCategory() {
             this.form.put('/api/category/' + this.form.id)
-                .then( data => {
+                .then(data => {
                     if (data.success) {
                         this.$emit('completed');
-                        this.swal({
-                            type: 'success',
-                            title: 'Updated',
-                            text: data.success
+                        Swal.fire({
+                            //   position: 'top-end',
+                            heightAuto: false,
+                            width: 300,
+                            icon: 'success',
+                            title: 'Update success',
+                            showConfirmButton: false,
+                            timer: 1500
                         })
+
                     }
                 }).catch(error => {
 
             });
         },
-        selectAll: function() {
-
+        mouseOver: function (id) {
+            this.buttonIndex = id
+        },
+        mouseLeave: function () {
+            this.buttonIndex = false
+        }
+        ,
+        checkAll: function () {
+            this.isCheckAll = !this.isCheckAll;
+            this.checkedCateIds = [];
+            if (this.isCheckAll) { // Check all
+                for (let key in this.listCategory) {
+                    this.checkedCateIds.push(this.listCategory[key].id);
+                }
+            }
+        },
+        selectCheckboxId: function () {
+            if (this.checkedCateIds.length === this.listCategory.length) {
+                this.isCheckAll = true;
+            } else {
+                this.isCheckAll = false;
+            }
+            console.log("length...", this.checkedCateIds)
         },
     },
     watch: {
@@ -166,10 +234,48 @@ export default {
 </script>
 
 <style scoped>
+ul {
+    list-style-type: none;
+}
+
+.swal-height {
+    height: 80px !important;
+}
+
+ul li {
+    float: left;
+    margin: 3px;
+}
+
+.position-absolute {
+    position: absolute;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.top-1 {
+    top: 1px;
+}
+
+.right-0 {
+    right: 0px;
+}
+
+.display {
+    display: none;
+}
+
+.hidden-action {
+    display: none;
+}
+
 .position-left {
     margin-right: 7px;
 }
-.heading-btn{
+
+.heading-btn {
     margin-right: 4px;
 }
 </style>

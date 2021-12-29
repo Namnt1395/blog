@@ -23,10 +23,10 @@
                             </div>
                             <div class="form-group">
                                 <label>Status</label>
-                                <select class="form-control" v-model="selected">
+                                <select class="form-control" v-model="form.status">
                                     <option>Select</option>
-                                    <option :value="1">Active</option>
-                                    <option :value="2">DeActive</option>
+                                    <option value="1">Active</option>
+                                    <option value="2">DeActive</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -69,10 +69,11 @@ export default {
     },
     methods: {
         createCategory() {
+            console.log("demo.......",this.form.data())
             this.form.post('/api/category')
                 .then(data => {
                     if (data.success) {
-                        this.$emit('completed');
+                        this.$router.back()
                         // this.$swal({
                         //     type: 'success',
                         //     title: 'Created!',
@@ -84,6 +85,9 @@ export default {
             });
          //   this.$router.back()
         }
+    },
+    created() {
+        console.log(this.selected)
     }
 }
 </script>

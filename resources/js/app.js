@@ -1,7 +1,7 @@
 import './bootstrap';
 import Vue from "vue";
 import router from "./routes/routes";
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import {BootstrapVue, IconsPlugin} from 'bootstrap-vue'
 
 // Import Bootstrap an BootstrapVue CSS files (order is important)
 import 'bootstrap/dist/css/bootstrap.css'
@@ -14,6 +14,10 @@ Vue.use(VueRouter);
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
+
+import swal from 'sweetalert2';
+window.Swal = swal;
+
 
 
 Vue.component('side-menu', SideMenu)

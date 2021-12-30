@@ -9,11 +9,15 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import VueRouter from 'vue-router';
 import SideMenu from "./components/SideMenu";
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(VueRouter);
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
+
+Vue.use(ElementUI);
 
 import swal from 'sweetalert2';
 window.Swal = swal;

@@ -15,39 +15,45 @@
                                 </div>
                             </div><!-- /.card-header -->
                             <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th><input type='checkbox' @click='checkAll()' v-model='isCheckAll'></th>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <!--                                        <th>Action</th>-->
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr v-for="cat in listCategory" @mouseover="mouseOver(cat.id)"
-                                        @mouseleave="mouseLeave()">
-                                        <td><input type="checkbox" v-bind:value="cat.id" v-model="checkedCateIds"
-                                                   v-on:change="selectCheckboxId()"></td>
-                                        <td>{{ cat.id }}</td>
-                                        <td>
+                                <el-table
+                                    prop="id"
+                                    v-loading="loading"
+                                    empty-text="Data Empty"
+                                    :data="listCategory"
+                                    border
+                                    style="width: 100%; margin-top: 20px"
+                                    :row-class-name="hoverDemo"
+                                    @cell-mouse-enter="mouseOver"
+                                    @cell-mouse-leave="mouseLeave"
+                                >
+                                    <el-table-column
+                                        prop="id"
+                                        label="ID"
+                                        width="180">
+                                    </el-table-column>
+                                    <el-table-column
+                                        prop="title"
+                                        label="Name">
+                                        <template slot-scope="scope">
                                             <div class="detail-name position-relative">
-                                                <div class="name"> {{ cat.title }}</div>
-                                                <ul class="position-absolute right-0 top-1"
-                                                    v-show="buttonIndex === cat.id">
-                                                    <li><a href="#" @click="editCategory(cat)"> <i
-                                                        class="fa fa-edit blue"></i></a></li>
-                                                    <li><a href="#" @click="deleteCategory(cat.id)"> <i
+                                                <div class="name"> {{scope.row.title}}</div>
+                                                <ul class="position-absolute right-0 top-1 display"
+                                                    v-show="buttonIndex === scope.row.id">
+                                                    <li>
+                                                       <a href="#" @click="editCategory(scope.row)">
+                                                           <i class="fa fa-edit blue"></i></a></li>
+                                                    <li><a href="#" @click="deleteCategory(scope.row.id)"> <i
                                                         class="fa fa-trash red"></i></a></li>
                                                 </ul>
                                             </div>
+                                        </template>
 
-                                        </td>
-                                        <td>{{ cat.description }}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                    </el-table-column>
+                                    <el-table-column
+                                        prop="description"
+                                        label="Description">
+                                    </el-table-column>
+                                </el-table>
                             </div>
                             <div class="overflow-auto">
                                 <b-pagination
@@ -116,6 +122,8 @@ export default {
 
     data() {
         return {
+
+            loading: true,
             editMode: false,
             checkedCateIds: [],
             isCheckAll: false,
@@ -129,7 +137,7 @@ export default {
             selected: [],
             allSelected: false,
             cateIds: [],
-            listCategory: {},
+            listCategory: [],
             rows: 0,
             perPage: 5,
             currentPage: 1,
@@ -146,9 +154,14 @@ export default {
         });
     },
     methods: {
+        hoverDemo() {
+            return "demo";
+        },
+
         loadListCategory(page = 1) {
             console.log(page)
             axios.get('/api/category/list?page=' + page).then(({data}) => (this.listCategory = data.data, this.rows = data.count))
+            this.loading = false;
         },
         editCategory(category) {
             this.editMode = true;
@@ -169,19 +182,19 @@ export default {
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Send request to server
-                    this.form.delete('api/category/'+id).then(()=>{
+                    this.form.delete('api/category/' + id).then(() => {
                         Swal.fire({
-                            heightAuto: false,
-                            width: 300,
-                            icon: 'success',
-                            title: 'Deleted',
-                            showConfirmButton: false,
-                            timer: 1000
+                                heightAuto: false,
+                                width: 300,
+                                icon: 'success',
+                                title: 'Deleted',
+                                showConfirmButton: false,
+                                timer: 1000
                             }
                         )
                         this.$emit('completed');
                         // Fire.$emit('AfterCreate');
-                    }).catch((data)=> {
+                    }).catch((data) => {
                         Swal.fire("Failed!", data.message, "warning");
                     });
 
@@ -208,8 +221,8 @@ export default {
 
             });
         },
-        mouseOver: function (id) {
-            this.buttonIndex = id
+        mouseOver: function (index, row) {
+            this.buttonIndex = index.id
         },
         mouseLeave: function () {
             this.buttonIndex = false
@@ -237,7 +250,8 @@ export default {
             handler: function (value) {
                 this.loadListCategory(value)
             }
-        }
+        },
+
     }
 }
 </script>
@@ -273,7 +287,7 @@ ul li {
 }
 
 .display {
-    display: none;
+    display: block;
 }
 
 .hidden-action {
